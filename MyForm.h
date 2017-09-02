@@ -1,6 +1,7 @@
 #pragma once
 #include "Basic.h"
 #include "JSON_Task.h"
+#include "Detailed_dialog.h"
 
 namespace Make_Application {
 
@@ -302,6 +303,8 @@ namespace Make_Application {
 		System::Windows::Forms::TextBox^  panel;
 		//基本ダイアログを開くオブジェクト
 		ref class Basic^ basic;
+		//詳細ダイアログを開くオブジェクト
+		ref class Detailed_dialog^ Detailed_Dialog;
 		//JSON処理を行うためのクラスオブジェクト
 		JSON_Task* output_table;
 
@@ -368,36 +371,41 @@ namespace Make_Application {
 		//表を生成する
 		this->Grid_Tab->Controls->Add(this->grid_table);
 	}
+	//各コントロールをクリックしたときのイベント
+	//ダイアログを表示しJSONの詳細を表示し、
+	//OKボタン押下でメンバのmapを変更する
 	private: System::Void Panel_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
 
 		//座標取得
 		int y_p = this->grid_table->GetCellPosition((TextBox^)sender).Row;
 		int x_p = this->grid_table->GetCellPosition((TextBox^)sender).Column;
+		//key名となる座標文字を取得
+		std::string coordinate = this->output_table->create_coordinate(x_p, y_p);
+		//ダブルクリックした場所の配列の要素数
+		int row = this->output_table->JSON_map[coordinate].size();
 
-		//std::cout << x_p << " " << y_p << "\n";
+		//配列を末端まで走査して文字列を表にする
+		for (auto itr = this->output_table->JSON_map[coordinate].begin();
+			itr != this->output_table->JSON_map[coordinate].end(); itr++) {
 
-		//std::cout << this->tableLayoutPanel1->GetColumnSpan((TextBox^)sender) << "\n";
+		}
 
-
-		this->grid_table->
-			GetControlFromPosition(this->grid_table->GetCellPosition((TextBox^)sender).Column +
-				this->grid_table->GetColumnSpan((TextBox^)sender),
-				this->grid_table->GetCellPosition((TextBox^)sender).Row)->Visible = false;
-
-		this->grid_table->
-			GetControlFromPosition(this->grid_table->GetCellPosition((TextBox^)sender).Column,
-				this->grid_table->GetCellPosition((TextBox^)sender).Row)->Text = "ff";
-
-
-		this->grid_table->SetColumnSpan(this->grid_table->
-			GetControlFromPosition(this->grid_table->GetCellPosition((TextBox^)sender).Column,
-				y_p), this->grid_table->GetColumnSpan((TextBox^)sender) + 1);
-
-
-		this->grid_table->
-			GetControlFromPosition(this->grid_table->GetCellPosition((TextBox^)sender).Column,
-				this->grid_table->GetCellPosition((TextBox^)sender).Row)->Size =
-			System::Drawing::Size(105 * this->grid_table->GetColumnSpan((TextBox^)sender), 30);
+		//詳細ダイアログの生成
+		this->Detailed_Dialog = gcnew Detailed_dialog();
+		//一列の表を作成する
+		this->Detailed_Dialog->Detailed->ColumnCount = 1;
+		//最低でも 1 以上設定する
+		this->Detailed_Dialog->Detailed->RowCount = this->output_table->JSON_map[coordinate].size() <= 0
+			? 1 : this->output_table->JSON_map[coordinate].size();
+		//取得した配列の値を末端まで走査してダイアログを作成する
+		for (int i = 0; i < row; i++) {
+			//先頭から順にテキストを入れていく
+			this->Detailed_Dialog->Detailed[0,i]->Value = 
+				this->output_table->Convert_String(this->output_table->JSON_map[coordinate][i], this->to_System);;
+		}
+		
+		//ダイアログの表示
+		this->Detailed_Dialog->ShowDialog();
 	}
 			 //基本ダイアログを開くイベント
 	private: System::Void 基本ToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {

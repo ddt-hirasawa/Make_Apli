@@ -1,6 +1,10 @@
-﻿  MyForm.cpp
+﻿  Detailed_dialog.cpp
+  MyForm.cpp
   Unknown compiler version - please run the configure tests and report the results
 c:\users\admin\source\repos\make_application\make_application\JSON_Task.h(243): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
-c:\users\admin\source\repos\make_application\make_application\MyForm.h(334): warning C4101: 'ex': ローカル変数は 1 度も使われていません。
-c:\users\admin\source\repos\make_application\make_application\MyForm.h(442): warning C4267: '初期化中': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+c:\users\admin\source\repos\make_application\make_application\MyForm.h(337): warning C4101: 'ex': ローカル変数は 1 度も使われていません。
+c:\users\admin\source\repos\make_application\make_application\MyForm.h(385): warning C4267: '初期化中': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+c:\users\admin\source\repos\make_application\make_application\MyForm.h(399): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+c:\users\admin\source\repos\make_application\make_application\MyForm.h(450): warning C4267: '初期化中': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+  コードを生成中...
   Make_Application.vcxproj -> C:\Users\admin\source\repos\Make_Application\x64\Release\Make_Application.exe

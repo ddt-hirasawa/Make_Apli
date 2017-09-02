@@ -136,10 +136,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Basic.cpp" />
+    <ClCompile Include="Detailed_dialog.cpp" />
     <ClCompile Include="MyForm.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Basic.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="Detailed_dialog.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="JSON_Task.h" />
@@ -150,6 +154,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Basic.resx">
       <DependentUpon>Basic.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Detailed_dialog.resx">
+      <DependentUpon>Detailed_dialog.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MyForm.resx">
       <DependentUpon>MyForm.h</DependentUpon>
