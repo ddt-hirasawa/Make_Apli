@@ -1,8 +1,26 @@
 #pragma once
+#include <iostream>
 #include <map>
 #include <vector>
+#include <utility>
+#include <functional>
 #include <string>
+#include <fstream>
+#include <codecvt>
+#include <locale>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/foreach.hpp>
+#include <boost/optional.hpp>
+#include <boost/iostreams/stream.hpp> 
+#include <boost/iostreams/categories.hpp>  
+#include <boost/iostreams/code_converter.hpp>
+#include <boost/locale.hpp> 
 
+namespace JSON_TASK {
+
+using namespace boost::property_tree;
+using namespace System;
 /*
 クラス名 JSON_Task 
 概要 : JSONパーサでツリー構造にした文字列を取り出します。これを表にするためにkey名をコントロールの座標とした
@@ -30,7 +48,110 @@ public :
 	作成日 : 2017年9月2日
 	作成者 : 平澤敬介
 	*/
+	void create_map(ptree pt, std::vector<std::string> tmp) {
 
+		//配列の要素数を調べるカウンタ
+		int count = 0;
+		//配列要素走査用のツリー構造オブジェクト
+		ptree array_pt;
+
+		//イテレータを使い末尾まで走査する
+		BOOST_FOREACH(const boost::property_tree::ptree::value_type& e, pt) {
+
+			//配列構造の判定式 配列の場合 value のキー名が空になっているはず
+			if (e.first.empty()) {
+
+
+				//確認用
+				count++;
+				std::cout << "\n" << "要素数" << count << "\n";
+
+				//オブジェクト構造なのか判定
+				if (0 < e.second.size()) {
+					//オブジェクトの場合イテレータで操作してキー名と値を入れる
+					BOOST_FOREACH(const boost::property_tree::ptree::value_type& array_object, e.second) {
+						//key名を入れる
+						tmp.push_back(array_object.first);
+						//値を入れる
+						tmp.push_back(array_object.second.data());
+					}
+					//配列の識別用の文字を入れる
+					tmp.push_back("This_is_an_array_element");
+					//value 要素か判定
+				}
+				else {
+					//値を入れる
+					tmp.push_back(e.second.data());
+					//配列の識別用の文字を入れる
+					tmp.push_back("This_is_an_array_element");
+				}
+
+
+
+
+
+
+
+				//確認用　Value と 配列の2か所
+				//この時点で配列には階層となるkey名が入っている イテレータでkey名を走査
+				for (std::vector<std::string>::iterator itr = tmp.begin(); itr != tmp.end(); itr++) {
+
+					//テスト用コンソールに表示
+					std::cout << *itr << " ";
+				}
+				std::cout << "\n";
+
+				//オブジェクト構造なのか判定
+				if (0 < e.second.size()) {
+					//次の要素に備えて不要な値を取り出す
+					tmp.pop_back();
+					tmp.pop_back();
+					tmp.pop_back();
+
+					//value 要素か判定
+				}
+				else {
+					//次の要素に備えて不要な値を取り出す
+					tmp.pop_back();
+					tmp.pop_back();
+				}
+
+				//オブジェクト構造の判定式 オブジェクトの場合 secondの要素のsize が1以上になっているはず
+			}
+			else if (0 < e.second.size()) {
+
+				//配列にキー名を追加する
+				tmp.push_back(e.first);
+				//再帰処理を行う
+				create_map(e.second, tmp);
+				//キー名を取り出す
+				tmp.pop_back();
+				//それ以外の場合 value要素のはず
+			}
+			else {
+				//key名を入れる
+				tmp.push_back(e.first);
+				//値を入れる
+				tmp.push_back(e.second.data());
+
+
+
+
+				//確認用　Value と 配列の2か所
+				//この時点で配列には階層となるkey名が入っている イテレータでkey名を走査
+				for (std::vector<std::string>::iterator itr = tmp.begin(); itr != tmp.end(); itr++) {
+
+					//テスト用コンソールに表示
+					std::cout << *itr << " ";
+				}
+				std::cout << "\n";
+
+				//次の要素に備えて値を取り出す
+				tmp.pop_back();
+				tmp.pop_back();
+			}
+		}
+	}
 	/*
 	関数名 : output_array
 	概要   : コントロールの座標文字をkeyとして配列を取り出す
@@ -107,3 +228,4 @@ public :
 	作成者 : 平澤敬介
 	*/
 };
+}
