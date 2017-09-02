@@ -22,6 +22,8 @@ namespace JSON_TASK {
 
 using namespace boost::property_tree;
 using namespace System;
+using namespace System::IO;
+using namespace System::Windows::Forms;
 /*
 クラス名 JSON_Task 
 概要 : JSONパーサでツリー構造にした文字列を取り出します。これを表にするためにkey名をコントロールの座標とした
@@ -94,8 +96,8 @@ public :
 				}
 
 				//座標文字を作成
-				this->coordinate = boost::lexical_cast<std::string>(this->x_position) + "."
-					+ boost::lexical_cast<std::string>(this->y_position);
+				this->coordinate = this->create_coordinate(this->x_position, y_position);
+				//実際にmapに追加
 				this->JSON_map[this->coordinate] = tmp;
 
 				//オブジェクト構造なのか判定
@@ -137,8 +139,8 @@ public :
 				tmp.push_back(e.second.data());
 
 				//座標文字を作成
-				this->coordinate = boost::lexical_cast<std::string>(this->x_position) + "."
-					+ boost::lexical_cast<std::string>(this->y_position);
+				this->coordinate = this->create_coordinate(this->x_position,y_position);
+				//実際にmapに追加
 				this->JSON_map[this->coordinate] = tmp;
 				//次の要素に備えて値を取り出す
 				tmp.pop_back();
@@ -147,6 +149,18 @@ public :
 				this->x_position++;
 			}
 		}
+	}
+	/*
+	関数名 : create_coordinate
+	概要   : コントロールの座標文字を作成する
+	引数   : int x,y コントロールの座標
+	返却値 : std::string 座標文字
+	作成日 : 2017年9月2日
+	作成者 : 平澤敬介
+	*/
+	std::string create_coordinate(int x, int y) {
+		//座標文字を返却 ->  x.y の形
+		return boost::lexical_cast<std::string>(x) + "." + boost::lexical_cast<std::string>(y);
 	}
 	/*
 	関数名 : init_X_Y
@@ -234,7 +248,19 @@ public :
 	作成日 : 2017年9月2日
 	作成者 : 平澤敬介
 	*/
-
+	void erace_map(std::string coordinate) {
+		//イテレータで位置を特定する
+		auto itr = this->JSON_map.find(coordinate);
+		//key名の値が入っているか確認する
+		if (itr != this->JSON_map.end()) {
+			//入っているならば削除する
+			this->JSON_map.erase(itr);
+		}
+		else {
+			//エラーメッセージを表示する
+			MessageBox::Show("削除できませんでした");
+		}
+	}
 	/*
 	関数名 : init
 	概要   : データを初期化する
@@ -243,5 +269,9 @@ public :
 	作成日 : 2017年9月2日
 	作成者 : 平澤敬介
 	*/
+	void init() {
+		//mapを初期化
+		this->JSON_map.erase(this->JSON_map.begin(),this->JSON_map.end());
+	}
 };
 }

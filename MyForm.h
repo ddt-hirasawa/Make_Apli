@@ -1,6 +1,9 @@
 #pragma once
 #include "Basic.h"
 
+//別画面で作成したmapを受け取るためのオブジェクト
+std::map<std::string, std::vector<std::string>> receive;
+
 namespace Make_Application {
 
 	using namespace System;
@@ -297,7 +300,8 @@ namespace Make_Application {
 		System::Windows::Forms::TextBox^  panel;
 		//基本ダイアログを開くオブジェクト
 		ref class Basic^ basic;
-
+		//JSON処理を行うためのクラスオブジェクト
+		JSON_Task* output_table;
 
 	 //表を作成しJSONの値を配置する
 	//OKボタンをクリックしたときに縦横の値を読み取りtableのcolumn row に割り当てる
@@ -400,6 +404,13 @@ namespace Make_Application {
 		this->basic = gcnew Basic();
 		//ダイアログの表示
 		this->basic->ShowDialog();
+		//mapを受け取りクラスオブジェクトに入れる
+		this->output_table = new JSON_Task(receive);
+
+		if (!this->output_table->JSON_map.empty()) {
+			
+			MessageBox::Show("成功");
+		}
 	}
 };
 }

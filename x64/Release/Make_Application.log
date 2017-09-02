@@ -1,9 +1,5 @@
-﻿  Basic.cpp
+﻿  MyForm.cpp
   Unknown compiler version - please run the configure tests and report the results
-c:\users\admin\source\repos\make_application\make_application\JSON_Task.h(184): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
-  MyForm.cpp
-  Unknown compiler version - please run the configure tests and report the results
-c:\users\admin\source\repos\make_application\make_application\JSON_Task.h(184): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
-c:\users\admin\source\repos\make_application\make_application\MyForm.h(328): warning C4101: 'ex': ローカル変数は 1 度も使われていません。
-  コードを生成中...
+c:\users\admin\source\repos\make_application\make_application\JSON_Task.h(214): warning C4267: '引数': 'size_t' から 'int' に変換しました。データが失われているかもしれません。
+c:\users\admin\source\repos\make_application\make_application\MyForm.h(332): warning C4101: 'ex': ローカル変数は 1 度も使われていません。
   Make_Application.vcxproj -> C:\Users\admin\source\repos\Make_Application\x64\Release\Make_Application.exe

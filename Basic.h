@@ -17,6 +17,9 @@
 #include <boost/iostreams/code_converter.hpp>
 #include <boost/locale.hpp> 
 
+//別画面で作成したmapを受け取るためのオブジェクト
+extern std::map<std::string, std::vector<std::string>> receive;
+
 namespace Make_Application {
 
 	using namespace System;
@@ -65,6 +68,7 @@ namespace Make_Application {
 	private: System::Windows::Forms::TextBox^  DB;
 	private: System::Windows::Forms::TextBox^  Query;
 	private: System::Windows::Forms::TextBox^  JSON;
+	private: System::Windows::Forms::Button^  OK;
 
 	private:
 		/// <summary>
@@ -86,6 +90,7 @@ namespace Make_Application {
 			this->DB = (gcnew System::Windows::Forms::TextBox());
 			this->Query = (gcnew System::Windows::Forms::TextBox());
 			this->JSON = (gcnew System::Windows::Forms::TextBox());
+			this->OK = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
 			// DB名
@@ -147,11 +152,24 @@ namespace Make_Application {
 			this->JSON->TabIndex = 8;
 			this->JSON->DoubleClick += gcnew System::EventHandler(this, &Basic::JSON_DoubleClick);
 			// 
+			// OK
+			// 
+			this->OK->Font = (gcnew System::Drawing::Font(L"MS UI Gothic", 12, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(128)));
+			this->OK->Location = System::Drawing::Point(457, 280);
+			this->OK->Name = L"OK";
+			this->OK->Size = System::Drawing::Size(75, 23);
+			this->OK->TabIndex = 9;
+			this->OK->Text = L"OK";
+			this->OK->UseVisualStyleBackColor = true;
+			this->OK->Click += gcnew System::EventHandler(this, &Basic::OK_Click);
+			// 
 			// Basic
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 12);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(871, 358);
+			this->Controls->Add(this->OK);
 			this->Controls->Add(this->JSON);
 			this->Controls->Add(this->Query);
 			this->Controls->Add(this->DB);
@@ -166,7 +184,7 @@ namespace Make_Application {
 		}
 #pragma endregion
 
-
+//JSON処理を行うためのクラスオブジェクト
 public: JSON_Task* Json_Task = new JSON_Task;
 
 private:
@@ -210,8 +228,11 @@ private:
 
 			//メンバのマップに追加する可変長配列
 			std::vector<std::string> map_substitute;
+			//確認用
 			this->Json_Task->create_map(pt, map_substitute);
-
+			//座標を初期化する
+			this->Json_Task->init_X_Y();
+			//後でファイル名を指定できるように変更する
 			write_json("data_out.json", pt, std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
 			//ファイルを取得できなかったとき様
 		} catch (Exception^ e) {
@@ -226,10 +247,20 @@ private:
 				Console::WriteLine("problem reading file '{0}'", fileName);
 			}	
 		}
-
-		//ダイアログを閉じる
-		this->Close();
 	}
+//OKボタンのクリックイベント
+private: System::Void OK_Click(System::Object^  sender, System::EventArgs^  e) {
 
+	//この時点でmapが空の場合処理を行わない
+	if (this->Json_Task->JSON_map.empty()) {
+		//エラーメッセージ
+		MessageBox::Show("JSONが読み込まれていません");
+		return;
+	}
+	//MyForm画面にmapを渡す
+	receive = this->Json_Task->JSON_map;
+	//ダイアログを閉じる
+	this->Close();
+}
 };
 }
