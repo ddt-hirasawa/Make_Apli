@@ -12,6 +12,7 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/iostreams/stream.hpp> 
 #include <boost/iostreams/categories.hpp>  
 #include <boost/iostreams/code_converter.hpp>
@@ -34,6 +35,13 @@ class JSON_Task {
 public :
 	//JSONパーサでツリー構造にしたオブジェクトを操作するためのオブジェクト
 	std::map<std::string, std::vector<std::string>> JSON_map;
+	//コントロールの座標文字
+	std::string coordinate = "";
+	//コントロールの座標文字を作成する変数 x y
+	int x_position;
+	int y_position;
+	//配列要素の識別し
+	std::string array_identi = "This_is_an_array_element";
 	//デフォルトコンストラスタ
 	JSON_Task() {};
 	//コンストラスタ 作成したmapをメンバに加える
@@ -61,10 +69,9 @@ public :
 			//配列構造の判定式 配列の場合 value のキー名が空になっているはず
 			if (e.first.empty()) {
 
-
 				//確認用
-				count++;
-				std::cout << "\n" << "要素数" << count << "\n";
+				//count++;
+				//std::cout << "\n" << "要素数" << count << "\n";
 
 				//オブジェクト構造なのか判定
 				if (0 < e.second.size()) {
@@ -76,14 +83,14 @@ public :
 						tmp.push_back(array_object.second.data());
 					}
 					//配列の識別用の文字を入れる
-					tmp.push_back("This_is_an_array_element");
+					tmp.push_back(this->array_identi);
 					//value 要素か判定
 				}
 				else {
 					//値を入れる
 					tmp.push_back(e.second.data());
 					//配列の識別用の文字を入れる
-					tmp.push_back("This_is_an_array_element");
+					tmp.push_back(this->array_identi);
 				}
 
 
@@ -94,12 +101,17 @@ public :
 
 				//確認用　Value と 配列の2か所
 				//この時点で配列には階層となるkey名が入っている イテレータでkey名を走査
-				for (std::vector<std::string>::iterator itr = tmp.begin(); itr != tmp.end(); itr++) {
+				/*for (std::vector<std::string>::iterator itr = tmp.begin(); itr != tmp.end(); itr++) {
 
 					//テスト用コンソールに表示
 					std::cout << *itr << " ";
 				}
-				std::cout << "\n";
+				std::cout << "\n";*/
+				std::cout << "(縦 " << this->y_position << " , 横 " << this->x_position << ")\n";
+				//座標文字を作成
+				this->coordinate = boost::lexical_cast<std::string>(this->x_position) + "."
+					+ boost::lexical_cast<std::string>(this->y_position);
+				this->JSON_map[this->coordinate] = tmp;
 
 				//オブジェクト構造なのか判定
 				if (0 < e.second.size()) {
@@ -115,10 +127,11 @@ public :
 					tmp.pop_back();
 					tmp.pop_back();
 				}
+				//x座標を更新
+				this->x_position++;
 
-				//オブジェクト構造の判定式 オブジェクトの場合 secondの要素のsize が1以上になっているはず
-			}
-			else if (0 < e.second.size()) {
+			//オブジェクト構造の判定式 オブジェクトの場合 secondの要素のsize が1以上になっているはず
+			} else if (0 < e.second.size()) {
 
 				//配列にキー名を追加する
 				tmp.push_back(e.first);
@@ -126,6 +139,10 @@ public :
 				create_map(e.second, tmp);
 				//キー名を取り出す
 				tmp.pop_back();
+				//座標を更新
+				this->x_position = 0;
+				this->y_position++;
+
 				//それ以外の場合 value要素のはず
 			}
 			else {
@@ -134,24 +151,43 @@ public :
 				//値を入れる
 				tmp.push_back(e.second.data());
 
-
-
-
 				//確認用　Value と 配列の2か所
 				//この時点で配列には階層となるkey名が入っている イテレータでkey名を走査
-				for (std::vector<std::string>::iterator itr = tmp.begin(); itr != tmp.end(); itr++) {
+				/*for (std::vector<std::string>::iterator itr = tmp.begin(); itr != tmp.end(); itr++) {
 
 					//テスト用コンソールに表示
 					std::cout << *itr << " ";
 				}
-				std::cout << "\n";
+				std::cout << "\n";*/
 
+				std::cout << "(縦 " << this->y_position << " , 横 " << this->x_position << ")\n";
+
+				//座標文字を作成
+				this->coordinate = boost::lexical_cast<std::string>(this->x_position) + "."
+					+ boost::lexical_cast<std::string>(this->y_position);
+				this->JSON_map[this->coordinate] = tmp;
 				//次の要素に備えて値を取り出す
 				tmp.pop_back();
 				tmp.pop_back();
+				//x座標を更新する
+				this->x_position++;
 			}
 		}
 	}
+	/*
+	関数名 : init_X_Y
+	概要   : コントロールの座標文字を初期化する
+	引数   : 無し
+	返却値 : 無し
+	作成日 : 2017年9月2日
+	作成者 : 平澤敬介
+	*/
+	void init_X_Y() {
+		//座標を(0,0)に設定
+		this->x_position = 0;
+		this->y_position = 0;
+	}
+
 	/*
 	関数名 : output_array
 	概要   : コントロールの座標文字をkeyとして配列を取り出す
