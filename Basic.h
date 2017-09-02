@@ -17,9 +17,6 @@
 #include <boost/iostreams/code_converter.hpp>
 #include <boost/locale.hpp> 
 
-//別画面で作成したmapを受け取るためのオブジェクト
-extern std::map<std::string, std::vector<std::string>> receive;
-
 namespace Make_Application {
 
 	using namespace System;
@@ -257,8 +254,6 @@ private: System::Void OK_Click(System::Object^  sender, System::EventArgs^  e) {
 		MessageBox::Show("JSONが読み込まれていません");
 		return;
 	}
-	//MyForm画面にmapを渡す
-	receive = this->Json_Task->JSON_map;
 	//ダイアログを閉じる
 	this->Close();
 }

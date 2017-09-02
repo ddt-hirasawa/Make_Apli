@@ -40,8 +40,11 @@ public :
 	//コントロールの座標文字
 	std::string coordinate = "";
 	//コントロールの座標文字を作成する変数 x y
-	int x_position;
-	int y_position;
+	int x_position = 0;
+	int y_position = 0;
+	//コントロールの座標の最大値
+	int max_x_position = 0;
+	int max_y_position = 0;
 	//配列要素の識別し
 	std::string array_identi = "This_is_an_array_element";
 	//デフォルトコンストラスタ
@@ -70,10 +73,6 @@ public :
 
 			//配列構造の判定式 配列の場合 value のキー名が空になっているはず
 			if (e.first.empty()) {
-
-				//確認用
-				//count++;
-				//std::cout << "\n" << "要素数" << count << "\n";
 
 				//オブジェクト構造なのか判定
 				if (0 < e.second.size()) {
@@ -126,10 +125,15 @@ public :
 				create_map(e.second, tmp);
 				//キー名を取り出す
 				tmp.pop_back();
+				//最大値を更新する
+				if (max_x_position < x_position) {
+					this->max_x_position = x_position;
+				}
 				//座標を更新
 				this->x_position = 0;
 				this->y_position++;
-
+				//y軸の最大値を更新
+				this->max_y_position = this->y_position;
 				//それ以外の場合 value要素のはず
 			}
 			else {
@@ -162,6 +166,31 @@ public :
 		//座標文字を返却 ->  x.y の形
 		return boost::lexical_cast<std::string>(x) + "." + boost::lexical_cast<std::string>(y);
 	}
+	/*
+	関数名 : max_position_x
+	概要   : x軸の最大値を返す
+	引数   : 無し
+	返却値 : x軸の最大値
+	作成日 : 2017年9月2日
+	作成者 : 平澤敬介
+	*/
+	int max_position_x() const {
+
+		return this->max_x_position;
+	}
+	/*
+	関数名: max_position_y
+	概要 : y軸の最大値を返す
+	引数 : 無し
+	返却値 : y軸の最大値
+	作成日 : 2017年9月2日
+	作成者 : 平澤敬介
+	*/
+	int max_position_y() const {
+
+		return this->max_y_position;
+	}
+
 	/*
 	関数名 : init_X_Y
 	概要   : コントロールの座標文字を初期化する

@@ -1,8 +1,6 @@
 #pragma once
 #include "Basic.h"
-
-//別画面で作成したmapを受け取るためのオブジェクト
-std::map<std::string, std::vector<std::string>> receive;
+#include "JSON_Task.h"
 
 namespace Make_Application {
 
@@ -296,6 +294,10 @@ namespace Make_Application {
 		int Vertical = 0;
 		//横の数値を保管する変数
 		int Side = 0;
+		//エンコーディング std::string -> SystemStrig^用
+		System::Text::Encoding^ to_System = System::Text::Encoding::GetEncoding(65001);
+		//エンコーディング SystemStrig^ -> std::string用
+		System::Text::Encoding^ to_std = System::Text::Encoding::GetEncoding(0);
 		//動的に生成するテキストBOX
 		System::Windows::Forms::TextBox^  panel;
 		//基本ダイアログを開くオブジェクト
@@ -303,8 +305,8 @@ namespace Make_Application {
 		//JSON処理を行うためのクラスオブジェクト
 		JSON_Task* output_table;
 
-	 //表を作成しJSONの値を配置する
-	//OKボタンをクリックしたときに縦横の値を読み取りtableのcolumn row に割り当てる
+		//表を作成しJSONの値を配置する
+	   //OKボタンをクリックしたときに縦横の値を読み取りtableのcolumn row に割り当てる
 	private: System::Void OK_Click(System::Object^  sender, System::EventArgs^  e) {
 
 		//文字が含まれていたり Int型で表現できない数値の場合例外が発生するため try catch で囲う
@@ -397,20 +399,69 @@ namespace Make_Application {
 				this->grid_table->GetCellPosition((TextBox^)sender).Row)->Size =
 			System::Drawing::Size(105 * this->grid_table->GetColumnSpan((TextBox^)sender), 30);
 	}
-	//基本ダイアログを開くイベント
+			 //基本ダイアログを開くイベント
 	private: System::Void 基本ToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 
 		//基本ダイアログの生成
 		this->basic = gcnew Basic();
 		//ダイアログの表示
 		this->basic->ShowDialog();
-		//mapを受け取りクラスオブジェクトに入れる
-		this->output_table = new JSON_Task(receive);
+		//基本画面からオブジェクトを受け取りMyFormで使う
+		this->output_table = this->basic->Json_Task;
 
-		if (!this->output_table->JSON_map.empty()) {
-			
-			MessageBox::Show("成功");
+		//表の縦の値をセット
+		this->grid_table->RowCount = this->output_table->max_position_y();
+		//表の横の値をセット
+		this->grid_table->ColumnCount = this->output_table->max_position_x();
+
+		//列の走査
+		for (int j = 0; j < this->grid_table->RowCount; j++) {
+			//行の走査
+			for (int i = 0; i < this->grid_table->ColumnCount; i++) {
+				//TextBox を新たに生成
+				this->panel = gcnew TextBox();
+				//TextBoxの大きさを決定
+				this->panel->Size = System::Drawing::Size(100, 30);
+				//セルのダブルクリックイベントを設定
+				this->panel->DoubleClick += gcnew System::EventHandler(this, &MyForm::Panel_DoubleClick);
+				//TextBoxに表示するテキストを作成する
+				this->panel->Text = this->output_TextBox(i,j);
+				//テーブルにTextBoxを追加
+				this->grid_table->Controls->Add(this->panel, i, j);
+			}
 		}
+		//表を生成する
+		this->Grid_Tab->Controls->Add(this->grid_table);
+	}
+
+	//TextBoxに表示するテキストをオブジェクトから取り出す
+	String^ output_TextBox(int x,int y) {
+		//extBoxに表示するテキスト
+		String^ output = "";
+		//配列の要素数
+		int max = this->output_table->JSON_map[this->output_table->create_coordinate(x, y)].size() - 1;
+
+		if (max < 0) {
+
+			return output;
+		}
+
+		if (this->output_table->JSON_map[this->output_table->create_coordinate(x, y)][max]
+			== this->output_table->array_identi) {
+			
+			output = 
+			this->output_table->Convert_String(
+			this->output_table->JSON_map[this->output_table->create_coordinate(x, y)][max - 1], this->to_System);
+		}
+		else {
+
+			output =
+			this->output_table->Convert_String(
+				this->output_table->JSON_map[this->output_table->create_coordinate(x, y)][max], this->to_System);
+		}
+
+
+		return output;
 	}
 };
 }
