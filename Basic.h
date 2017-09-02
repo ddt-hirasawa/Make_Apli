@@ -170,26 +170,6 @@ namespace Make_Application {
 public: JSON_Task* Json_Task = new JSON_Task;
 
 private:
-	//System::String^からstd::string に変換する関数
-	//参照 https://msdn.microsoft.com/ja-jp/library/1b4az623.aspx
-	std::string ToStdString(System::String^ i_src,System::Text::Encoding^ i_encoding) {
-		//変換した文字列を補完する変数
-		std::string a_str;
-		
-		//判定式
-		if (i_src != nullptr &&  i_src->Length > 0) {
-			//変換するために一時的にbyte で保管する
-			array< Byte >^ a_array = System::Text::Encoding::Convert(
-				System::Text::Encoding::Unicode,		// 変換元エンコーディング
-				i_encoding,								// 変換先エンコーディング
-				System::Text::Encoding::Unicode->GetBytes(i_src));
-			//
-			pin_ptr<Byte> a_pin = &a_array[0];
-			a_str.assign(reinterpret_cast<char*>(a_pin), a_array->Length);
-		}
-		//String^ から std::string に変換 
-		return a_str;
-		}
 
 	//ファイルを読み込むイベント
 	private: System::Void JSON_DoubleClick(System::Object^  sender, System::EventArgs^  e) {
@@ -250,107 +230,6 @@ private:
 		//ダイアログを閉じる
 		this->Close();
 	}
-		//boostのツリー構造データから文字列を取得して可変長配列に入れる
-		//value に到達したならばメンバのマップに追加する関数をコールする
-		void create_map(ptree pt, std::vector<std::string> tmp) {
 
-			//配列の要素数を調べるカウンタ
-			int count = 0;
-			//配列要素走査用のツリー構造オブジェクト
-			ptree array_pt;
-
-			//イテレータを使い末尾まで走査する
-			BOOST_FOREACH(const boost::property_tree::ptree::value_type& e, pt) {
-
-				//配列構造の判定式 配列の場合 value のキー名が空になっているはず
-				if (e.first.empty()) {
-
-
-					//確認用
-					count++;
-					std::cout << "\n" << "要素数" << count << "\n";
-
-					//オブジェクト構造なのか判定
-					if (0 < e.second.size()) {
-						//オブジェクトの場合イテレータで操作してキー名と値を入れる
-						BOOST_FOREACH(const boost::property_tree::ptree::value_type& array_object, e.second) {
-							//key名を入れる
-							tmp.push_back(array_object.first);
-							//値を入れる
-							tmp.push_back(array_object.second.data());
-						}
-						//配列の識別用の文字を入れる
-						tmp.push_back("This_is_an_array_element");
-					//value 要素か判定
-					} else {
-						//値を入れる
-						tmp.push_back(e.second.data());
-						//配列の識別用の文字を入れる
-						tmp.push_back("This_is_an_array_element");
-					}
-
-
-
-
-
-
-
-					//確認用　Value と 配列の2か所
-					//この時点で配列には階層となるkey名が入っている イテレータでkey名を走査
-					for (std::vector<std::string>::iterator itr = tmp.begin(); itr != tmp.end(); itr++) {
-
-						//テスト用コンソールに表示
-						std::cout << *itr << " ";
-					}
-					std::cout << "\n";
-
-					//オブジェクト構造なのか判定
-					if (0 < e.second.size()) {
-						//次の要素に備えて不要な値を取り出す
-						tmp.pop_back();
-						tmp.pop_back();
-						tmp.pop_back();
-						
-					//value 要素か判定
-					} else {
-						//次の要素に備えて不要な値を取り出す
-						tmp.pop_back();
-						tmp.pop_back();
-					}
-
-				//オブジェクト構造の判定式 オブジェクトの場合 secondの要素のsize が1以上になっているはず
-				} else if (0 < e.second.size()) {
-
-					//配列にキー名を追加する
-					tmp.push_back(e.first);
-					//再帰処理を行う
-					create_map(e.second, tmp);
-					//キー名を取り出す
-					tmp.pop_back();
-				//それ以外の場合 value要素のはず
-				} else {
-					//key名を入れる
-					tmp.push_back(e.first);
-					//値を入れる
-					tmp.push_back(e.second.data());
-
-
-
-
-					//確認用　Value と 配列の2か所
-					//この時点で配列には階層となるkey名が入っている イテレータでkey名を走査
-					for (std::vector<std::string>::iterator itr = tmp.begin(); itr != tmp.end(); itr++) {
-
-						//テスト用コンソールに表示
-						std::cout << *itr << " ";
-					}
-					std::cout << "\n";
-
-					//次の要素に備えて値を取り出す
-					tmp.pop_back();
-					tmp.pop_back();
-				}
-		}
-	}
 };
 }
