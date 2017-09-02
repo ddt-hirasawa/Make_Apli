@@ -93,21 +93,6 @@ public :
 					tmp.push_back(this->array_identi);
 				}
 
-
-
-
-
-
-
-				//確認用　Value と 配列の2か所
-				//この時点で配列には階層となるkey名が入っている イテレータでkey名を走査
-				/*for (std::vector<std::string>::iterator itr = tmp.begin(); itr != tmp.end(); itr++) {
-
-					//テスト用コンソールに表示
-					std::cout << *itr << " ";
-				}
-				std::cout << "\n";*/
-				std::cout << "(縦 " << this->y_position << " , 横 " << this->x_position << ")\n";
 				//座標文字を作成
 				this->coordinate = boost::lexical_cast<std::string>(this->x_position) + "."
 					+ boost::lexical_cast<std::string>(this->y_position);
@@ -151,17 +136,6 @@ public :
 				//値を入れる
 				tmp.push_back(e.second.data());
 
-				//確認用　Value と 配列の2か所
-				//この時点で配列には階層となるkey名が入っている イテレータでkey名を走査
-				/*for (std::vector<std::string>::iterator itr = tmp.begin(); itr != tmp.end(); itr++) {
-
-					//テスト用コンソールに表示
-					std::cout << *itr << " ";
-				}
-				std::cout << "\n";*/
-
-				std::cout << "(縦 " << this->y_position << " , 横 " << this->x_position << ")\n";
-
 				//座標文字を作成
 				this->coordinate = boost::lexical_cast<std::string>(this->x_position) + "."
 					+ boost::lexical_cast<std::string>(this->y_position);
@@ -196,7 +170,10 @@ public :
 	作成日 : 2017年9月2日
 	作成者 : 平澤敬介
 	*/
-
+	std::vector<std::string> output_array(std::string coordinate) {
+		
+		return this->JSON_map[coordinate];
+	}
 	/*
 	関数名 : put_map
 	概要   : key名と配列を指定してmapに加える
@@ -205,7 +182,10 @@ public :
 	作成日 : 2017年9月2日
 	作成者 : 平澤敬介
 	*/
+	void put_map(std::string coordinate, std::vector<std::string> vec) {
 
+		this->JSON_map[coordinate] = vec;
+	}
 	/*
 	関数名 : Convert_String
 	概要   : std::string 文字列を System::String^文字列に文字コードを指定して変換する
