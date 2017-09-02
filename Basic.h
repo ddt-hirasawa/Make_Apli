@@ -27,6 +27,7 @@ namespace Make_Application {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace boost::property_tree;
+	using namespace JSON_TASK;
 
 	/// <summary>
 	/// Basic の概要
@@ -206,7 +207,7 @@ private:
 			//ファイルを開ける文字コードに変換 Shift-JIS
 			System::Text::Encoding^ enc = System::Text::Encoding::GetEncoding(0);
 			//std::string 型に文字列を変換
-			std::string set_path = ToStdString(fileName, enc);
+			std::string set_path = this->Json_Task->Convert_string(fileName, enc);
 			//確認用 コンソール上にファイルパスを表示
 			std::cout << set_path << "\n";
 
@@ -229,7 +230,7 @@ private:
 
 			//メンバのマップに追加する可変長配列
 			std::vector<std::string> map_substitute;
-			create_map(pt, map_substitute);
+			this->Json_Task->create_map(pt, map_substitute);
 
 			write_json("data_out.json", pt, std::locale(std::locale(), new std::codecvt_utf8<wchar_t>));
 			//ファイルを取得できなかったとき様
