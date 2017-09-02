@@ -13,11 +13,11 @@ mapに変換するためのクラス
 */
 class JSON_Task {
 
-private :
+public :
 	//JSONパーサでツリー構造にしたオブジェクトを操作するためのオブジェクト
 	std::map<std::string, std::vector<std::string>> JSON_map;
 	//デフォルトコンストラスタ
-	JSON_Task();
+	JSON_Task() {};
 	//コンストラスタ 作成したmapをメンバに加える
 	JSON_Task(std::map<std::string, std::vector<std::string>> map)
 		: JSON_map(map) {};
@@ -49,6 +49,46 @@ private :
 	作成者 : 平澤敬介
 	*/
 
+	/*
+	関数名 : Convert_String
+	概要   : std::string 文字列を System::String^文字列に文字コードを指定して変換する
+	引数   : std::string 文字列 System::Text::Encoding^ エンコーディング
+	参照   : http://d.hatena.ne.jp/It_lives_vainly/20070824/1187947992
+	返却値 : System::String^文字列
+	作成日 : 2017年9月2日
+	作成者 : 平澤敬介
+	*/
+	String^ Convert_String(const std::string& i_src,System::Text::Encoding^ i_encoding) {
+		//エンコーディングを指定して新しくString^型の文字列を生成する
+		return  gcnew System::String(i_src.data(), 0, i_src.size(), i_encoding);
+	}
+	/*
+	関数名 : Convert_string
+	概要   : System::String 文字列を std::string 文字列に文字コードを指定して変換する
+	引数   : System::String 文字列 System::Text::Encoding^ エンコーディング
+	参照   : http://d.hatena.ne.jp/It_lives_vainly/20070824/1187947992
+	返却値 : std::string 文字列
+	作成日 : 2017年9月2日
+	作成者 : 平澤敬介
+	*/
+	std::string Convert_string(System::String^ i_src, System::Text::Encoding^ i_encoding) {
+		//変換した文字列を補完する変数
+		std::string a_str;
+
+		//判定式
+		if (i_src != nullptr &&  i_src->Length > 0) {
+			//変換するために一時的にbyte で保管する
+			array< Byte >^ a_array = System::Text::Encoding::Convert(
+				System::Text::Encoding::Unicode,		// 変換元エンコーディング
+				i_encoding,								// 変換先エンコーディング
+				System::Text::Encoding::Unicode->GetBytes(i_src));
+			//
+			pin_ptr<Byte> a_pin = &a_array[0];
+			a_str.assign(reinterpret_cast<char*>(a_pin), a_array->Length);
+		}
+		//String^ から std::string に変換 
+		return a_str;
+	}
 	/*
 	関数名 : erace_map
 	概要   : key名を指定してmapから取り除く

@@ -165,6 +165,10 @@ namespace Make_Application {
 		}
 #pragma endregion
 
+
+public: JSON_Task* Json_Task = new JSON_Task;
+
+private:
 	//System::String^からstd::string に変換する関数
 	//参照 https://msdn.microsoft.com/ja-jp/library/1b4az623.aspx
 	std::string ToStdString(System::String^ i_src,System::Text::Encoding^ i_encoding) {
